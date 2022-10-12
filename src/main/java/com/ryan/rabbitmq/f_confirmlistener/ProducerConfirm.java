@@ -1,6 +1,9 @@
-package com.ryan.rabbitmq.returnlistener;
+package com.ryan.rabbitmq.f_confirmlistener;
 
-import com.rabbitmq.client.*;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.ConfirmListener;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -9,7 +12,7 @@ import java.util.concurrent.TimeoutException;
  * @author ryan
  * @version Id: Procuder, v 0.1 2022/10/10 1:53 PM ryan Exp $
  */
-public class ProducerListener {
+public class ProducerConfirm {
 
     public static void main(String[] args) throws IOException, TimeoutException {
         //1. 创建连接工厂
@@ -27,32 +30,15 @@ public class ProducerListener {
         //4. 制定消息投递模式: 消息确认模式
         channel.confirmSelect();
 
-        String exchangeName = "test_return_exchange";
-        String routingKey = "return.save";
-        String routingKeyError = "abc.save";
+        String exchangeName = "test_confirm_exchange";
+        String routingKey = "confirm.save";
 
         //5. 发送一条消息
-        String message = "hello rabbitmq send return message!";
-
-        // 消息不可达监听，发送消息的时候，mandatory必须设置为true，监听才会生效
-        channel.addReturnListener(new ReturnListener() {
-            @Override
-            public void handleReturn(int replyCode, String replyText, String exchange, String routingKey, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                System.out.println("---- handle return ----");
-                System.out.println("replyCode: " + replyCode);
-                System.out.println("replyText: " + replyText);
-                System.out.println("exchange: " + exchange);
-                System.out.println("routingKey: " + routingKey);
-                System.out.println("properties: " + properties);
-                System.out.println("body: " + new String(body));
-            }
-        });
-
-//        channel.basicPublish(exchangeName, routingKey, null, message.getBytes());
-
-        // mandatory:true 消息路由不到，消息不会自动删除
-        channel.basicPublish(exchangeName, routingKeyError, true,null, message.getBytes());
-
+        String message = "hello rabbitmq send confirm message!";
+        for (int i = 0; i < 5; i++) {
+            // 1. exchange如果没有指定，会默认使用第一个default exchange，2. routingKey: 找和路由key同名的queue
+            channel.basicPublish(exchangeName, routingKey, null, message.getBytes());
+        }
 
         //6. 添加一个确认监听
         channel.addConfirmListener(new ConfirmListener() {

@@ -1,4 +1,4 @@
-package com.ryan.rabbitmq.quickstart;
+package com.ryan.rabbitmq.a_quickstart;
 
 import com.rabbitmq.client.*;
 

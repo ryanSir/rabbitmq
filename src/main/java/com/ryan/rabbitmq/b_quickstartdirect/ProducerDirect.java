@@ -1,4 +1,4 @@
-package com.ryan.rabbitmq.quickstartdirect;
+package com.ryan.rabbitmq.b_quickstartdirect;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;

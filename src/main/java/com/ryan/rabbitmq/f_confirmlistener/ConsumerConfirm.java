@@ -1,4 +1,4 @@
-package com.ryan.rabbitmq.quickstartdirect;
+package com.ryan.rabbitmq.f_confirmlistener;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -12,7 +12,7 @@ import java.util.concurrent.TimeoutException;
  * @author ryan
  * @version Id: Consumer, v 0.1 2022/10/10 1:53 PM ryan Exp $
  */
-public class ConsumerDirect {
+public class ConsumerConfirm {
 
     public static void main(String[] args) throws IOException, TimeoutException, InterruptedException {
         //1. 创建连接工厂
@@ -21,26 +21,19 @@ public class ConsumerDirect {
         connectionFactory.setPort(5672);
         connectionFactory.setVirtualHost("my_rabbit");
 
-        // 是否支持重连，每三秒执行一次
-        connectionFactory.setAutomaticRecoveryEnabled(true);
-        connectionFactory.setNetworkRecoveryInterval(3000);
-
         //2. 通过链接工厂创建连接
         Connection connection = connectionFactory.newConnection();
 
         //3. 通过connection创建一个Channel
         Channel channel = connection.createChannel();
 
-        //4. 声明
-        String exchangeName = "test_direct_exchange";
-        String exchangeType = "direct";
-        String queueName = "test_direct_queue";
-        String routingKey = "test.direct";
-        // 声明交换机
-        channel.exchangeDeclare(exchangeName,exchangeType,true,false,false,null);
-        // 声明队列 durable:是否持久化，ture,即使服务器重启，队列也不会被消失， exclusive：独占，ture,顺序消费 autoDelete:脱离了exchange，会自动删除
-        channel.queueDeclare(queueName, false, false, false, null);
-        // 建立绑定关系
+        //4. 声明交换机和队列，然后进行绑定设置，最后指定路由Key
+        String exchangeName = "test_confirm_exchange";
+        String routingKey = "confirm.save";
+        String queueName = "test_confirm_queue";
+
+        channel.exchangeDeclare(exchangeName,"topic",true);
+        channel.queueDeclare(queueName, true, false, false, null);
         channel.queueBind(queueName,exchangeName,routingKey);
 
         //5. 创建消费者

@@ -1,4 +1,4 @@
-package com.ryan.rabbitmq.confirmlistener;
+package com.ryan.rabbitmq.g_returnlistener;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -12,7 +12,7 @@ import java.util.concurrent.TimeoutException;
  * @author ryan
  * @version Id: Consumer, v 0.1 2022/10/10 1:53 PM ryan Exp $
  */
-public class ConsumerConfirm {
+public class ConsumerListener {
 
     public static void main(String[] args) throws IOException, TimeoutException, InterruptedException {
         //1. 创建连接工厂
@@ -28,9 +28,10 @@ public class ConsumerConfirm {
         Channel channel = connection.createChannel();
 
         //4. 声明交换机和队列，然后进行绑定设置，最后指定路由Key
-        String exchangeName = "test_confirm_exchange";
-        String routingKey = "confirm.save";
-        String queueName = "test_confirm_queue";
+        String exchangeName = "test_return_exchange";
+        String routingKey = "return.save";
+        String routingKeyError = "abc.save";
+        String queueName = "test_return_queue";
 
         channel.exchangeDeclare(exchangeName,"topic",true);
         channel.queueDeclare(queueName, true, false, false, null);

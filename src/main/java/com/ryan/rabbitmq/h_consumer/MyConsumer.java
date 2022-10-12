@@ -1,4 +1,4 @@
-package com.ryan.rabbitmq.consumer;
+package com.ryan.rabbitmq.h_consumer;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
