@@ -1,4 +1,4 @@
-package com.ryan.rabbitmq.c_quickstarttopic;
+package com.ryan.rabbitmq.i_limit;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -8,12 +8,10 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 /**
- * exchange direct 模式
- *
  * @author ryan
  * @version Id: Procuder, v 0.1 2022/10/10 1:53 PM ryan Exp $
  */
-public class ProducerTopic {
+public class ProducerLimit {
 
     public static void main(String[] args) throws IOException, TimeoutException {
         //1. 创建连接工厂
@@ -28,20 +26,19 @@ public class ProducerTopic {
         //3. 通过connection创建一个Channel
         Channel channel = connection.createChannel();
 
-        //4. 声明
-        String exchangeName = "test_topic_exchange";
-        String routingKey1 = "user.save";
-        String routingKey2 = "user.update";
-        String routingKey3 = "user.delete.abc";
+        //4. 制定消息投递模式: 消息确认模式
+        channel.confirmSelect();
 
-        //5. 发送
-        for (int i = 0; i < 1000; i++) {
-            String message = "hello rabbitmq for topic exchange message!";
-            channel.basicPublish(exchangeName, routingKey1, null, message.getBytes());
-            channel.basicPublish(exchangeName, routingKey2, null, message.getBytes());
-            channel.basicPublish(exchangeName, routingKey3, null, message.getBytes());
+        String exchangeName = "test_qos_exchange";
+        String routingKey = "qos.save";
+
+        //5. 发送一条消息
+        String message = "hello rabbitmq send qos message!";
+
+        // mandatory:true 消息路由不到，消息不会自动删除
+        for (int i=0;i<5;i++){
+            channel.basicPublish(exchangeName, routingKey, true, null, message.getBytes());
         }
-
 
         //5. 记得要关闭连接
         channel.close();

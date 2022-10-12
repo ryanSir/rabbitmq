@@ -1,4 +1,4 @@
-package com.ryan.rabbitmq.b_quickstartdirect;
+package com.ryan.rabbitmq.d_quickstart_fanout;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -13,7 +13,8 @@ import java.util.concurrent.TimeoutException;
  * @author ryan
  * @version Id: Procuder, v 0.1 2022/10/10 1:53 PM ryan Exp $
  */
-public class ProducerDirect {
+@SuppressWarnings("all")
+public class ProducerFanout {
 
     public static void main(String[] args) throws IOException, TimeoutException {
         //1. 创建连接工厂
@@ -29,8 +30,8 @@ public class ProducerDirect {
         Channel channel = connection.createChannel();
 
         //4. 声明
-        String exchangeName = "test_direct_exchange";
-        String routingKey = "test.direct";
+        String exchangeName = "test_fanout_exchange";
+        String routingKey = "";
 
         //5. 发送
         String message = "hello rabbitmq for direct exchange message!";

@@ -1,4 +1,4 @@
-package com.ryan.rabbitmq.c_quickstarttopic;
+package com.ryan.rabbitmq.d_quickstart_fanout;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -12,7 +12,8 @@ import java.util.concurrent.TimeoutException;
  * @author ryan
  * @version Id: Consumer, v 0.1 2022/10/10 1:53 PM ryan Exp $
  */
-public class ConsumerTopic {
+@SuppressWarnings("all")
+public class ConsumerFanout {
 
     public static void main(String[] args) throws IOException, TimeoutException, InterruptedException {
         //1. 创建连接工厂
@@ -32,13 +33,13 @@ public class ConsumerTopic {
         Channel channel = connection.createChannel();
 
         //4. 声明
-        String exchangeName = "test_topic_exchange";
-        String exchangeType = "topic";
-        String queueName = "test_topic_queue";
-        String routingKey = "user.#";
+        String exchangeName = "test_fanout_exchange";
+        String exchangeType = "fanout";
+        String queueName = "test_fanout_queue";
+        String routingKey = ""; // 路由key不设置
         // 声明交换机
         channel.exchangeDeclare(exchangeName,exchangeType,true,false,false,null);
-        // 声明队列
+        // 声明队列 durable:是否持久化，ture,即使服务器重启，队列也不会被消失， exclusive：独占，ture,顺序消费 autoDelete:脱离了exchange，会自动删除
         channel.queueDeclare(queueName, false, false, false, null);
         // 建立绑定关系
         channel.queueBind(queueName,exchangeName,routingKey);
